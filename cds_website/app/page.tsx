@@ -23,7 +23,7 @@ export default function Page() {
                 
             </div>
             <div className="flex items-center  justify-center mb-8">
-                <p className="text-left w-3/5 mx-auto">
+                <p className="text-left w-3/4 mx-auto">
                 Hi fellow CDS Alumni and Students, this resources is created to help our community excel in interviews and land the roles that we are happy with. Please be respectful with comments and do not write anything in mean or inappropriate. Your contribution is greatly appreciated. 
                 In addition, here are a few rules: <br/> <br/>
                 <span className="font-bold">Anonmity:</span><br/> <br/>

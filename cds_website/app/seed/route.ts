@@ -31,7 +31,8 @@ async function seedInterview() {
         INSERT INTO interview (email, date, company, position, round, otherRound, questionAnswer, userName, contactInfo)
         VALUES (${entry.email}, ${entry.date}, ${entry.company}, ${entry.position}, 
                 ${entry.round}, ${entry.otherRound}, ${entry.questionAnswer}, ${entry.userName}, ${entry.contactInfo})
-        ON CONFLICT (entry_id) DO NOTHING;
+        WHERE 
+        ON CONFLICT (email, company, position ) DO NOTHING;
       `;
     }),
   );

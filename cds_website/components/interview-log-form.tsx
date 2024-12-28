@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
+import { submitInterview } from "@/app/lib/action"
 
 export default function InterviewLogForm() {
   const [formData, setFormData] = useState({
@@ -22,6 +23,9 @@ export default function InterviewLogForm() {
     contactInfo: ""
   })
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setsSubmitted] = useState(false);
+
   const interviewRounds = [
     { value: "technical-onsite", label: "Technical Onsite" },
     { value: "behavioral", label: "Behavioral" },
@@ -29,13 +33,24 @@ export default function InterviewLogForm() {
     { value: "other", label: "Other" }
   ]
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const submissionData = {
-      ...formData,
-      round: formData.round === "other" ? formData.otherRound : formData.round
-    }
-    console.log("Submitted data:", submissionData)
+    setIsSubmitting(true)
+
+    try {
+      const result = await submitInterview(formData)
+      if (result.success) {
+        setsSubmitted(true)
+        console.log("Submitted data:", formData)
+      } else {
+        throw new Error(result.error)
+       }      
+      } catch (error) {
+        console.error('Error submitting form', error)
+        alert ('Failed to submit the form. Please try again')
+      } finally {
+        setIsSubmitting(false)
+      }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -71,6 +86,20 @@ export default function InterviewLogForm() {
       (formData.round !== "" && (formData.round !== "other" || formData.otherRound.trim() !== "")) &&
       formData.questionAnswer.length >= 20 &&
       isValidContactInfo(formData.contactInfo)
+    )
+  }
+
+  if (submitted) {
+    return (
+      <Card className="max-w-2xl mx-auto p-6">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl text-primary">Submission Received</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center space-y-4">
+          <p>Thank you for your submission. Your entry is being reviewed.</p>
+          <p>Once approved you will receive an email notification to view the interview log.</p>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -238,9 +267,9 @@ export default function InterviewLogForm() {
       </div>
       {/* Submit Button - Moved to bottom */}
       <Button type="submit" disabled={!isFormValid()} className="w-full">
-        Submit Interview Log
+        Submit Entry
       </Button>
     </form>
   )
-}
+
 
