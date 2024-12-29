@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import Image from "next/image"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +41,24 @@ export default function RootLayout({
       >
       <div className="flex min-h-screen">
         {/* Navigation Sidebar */}
-        <nav className="w-64 bg-muted p-4 space-y-2">
+        <nav className="w-80 bg-muted p-4 space-y-2">
+          {/* Logo Section */}
+          <div className="flex justify-center mb-8">
+                <div className="relative w-64 h-24">
+                <Image
+                    src= "/CDS_logo_purple.png"
+                    alt="Company Logo"
+                    className="object-contain"
+                    priority={true}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"  // Example sizes
+                    
+                />
+                </div>
+            </div>
+
+
+
           <div className="text-lg font-semibold mb-6"> Select </div>
           <Link
             href="/"

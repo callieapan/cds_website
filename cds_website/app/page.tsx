@@ -1,29 +1,12 @@
 
-import Image from "next/image";
 import InterviewLogForm from "../components/interview-log-form";
-
-
 
 export default function Page() {
     return (
         <main>
-            {/* Logo Section */}
-            <div className="flex justify-center mb-8">
-                <div className="relative w-64 h-24">
-                <Image
-                    src= "/CDS_logo_purple.png"
-                    alt="Company Logo"
-                    className="object-contain"
-                    priority={true}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"  // Example sizes
-                    
-                />
-                </div>
-                
-            </div>
+
             <div className="flex items-center  justify-center mb-8">
-                <p className="text-left w-3/4 mx-auto">
+                <p className="text-left w-2/3 mx-auto paragraph-spacing">
                 Hi fellow CDS Alumni and Students, this resources is created to help our community excel in interviews and land the roles that we are happy with. Please be respectful with comments and do not write anything in mean or inappropriate. Your contribution is greatly appreciated. 
                 In addition, here are a few rules: <br/> <br/>
                 <span className="font-bold">Anonmity:</span><br/> <br/>

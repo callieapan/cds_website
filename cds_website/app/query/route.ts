@@ -1,18 +1,19 @@
 import { db } from "@vercel/postgres";
-
+import { fetchTotalItems } from "../lib/data";
 
 const client = await db.connect();
 
 async function listInterviews() {
 
-    const data = await client.sql`
-    SELECT *
-    FROM interview
-    WHERE lower(company) like 'orange' -- must use single quotes
+    // const data = await client.sql`
+    // SELECT *
+    // FROM interview
+    // WHERE lower(company) like 'orange' -- must use single quotes
     
-    `;
-
-    return data.rows;
+    // `;
+    const data = await fetchTotalItems();
+    //return data.rows;
+    return data
 }
 
 export async function GET() {

@@ -37,7 +37,7 @@ export async function submitInterview(formData: {
     return { success: true };
   } catch (error){
     console.error('Failed to submit interview', error)
-    return { success: false, error: 'Failed to submit interview' + error.message};
+    return { success: false, error: 'Failed to submit interview ' + error.message};
 
   }
   
