@@ -1,9 +1,40 @@
 //import bcrypt from 'bcrypt';
 import { db } from '@vercel/postgres';
-import { interview_entry } from '../lib/placeholder_data';
-
+import { interview_entry, users } from '../lib/placeholder_data';
+import bcrypt from 'bcrypt';
 
 const client = await db.connect();
+
+async function seedUsers() {
+  await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  await client.sql`
+    CREATE TABLE IF NOT EXISTS interview_users (
+      id UUID DEFAULT uuid_generate_v4(),
+      name VARCHAR(255),
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL
+      
+    );
+  `;
+
+  const seedInterviewUsers = await Promise.all(
+    users.map(async (user) => {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      return client.sql`
+      INSERT INTO interview_users (name, email, password)
+        VALUES (${user.name}, ${user.email}, ${hashedPassword})
+        ON CONFLICT (email) DO NOTHING;
+      `;
+
+    }),
+  );
+
+  return seedInterviewUsers;
+}
+
+
+
+
 
 async function seedInterview() {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
@@ -26,12 +57,11 @@ async function seedInterview() {
 
   const insertedInterview = await Promise.all(
     interview_entry.map(async (entry) => {
-      //const hashedPassword = await bcrypt.hash(user.password, 10);
+      
       return client.sql`
         INSERT INTO interview (email, date, company, position, round, otherRound, questionAnswer, userName, contactInfo)
         VALUES (${entry.email}, ${entry.date}, ${entry.company}, ${entry.position}, 
                 ${entry.round}, ${entry.otherRound}, ${entry.questionAnswer}, ${entry.userName}, ${entry.contactInfo})
-        WHERE 
         ON CONFLICT (email, company, position ) DO NOTHING;
       `;
     }),
@@ -49,8 +79,8 @@ export async function GET() {
   // });
   try {
     await client.sql`BEGIN`;
-    await seedInterview();
-    //await seedCustomers();
+    //await seedInterview();
+    await seedUsers();
    // await seedInvoices();
     //await seedRevenue();
     await client.sql`COMMIT`;

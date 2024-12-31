@@ -16,9 +16,22 @@ async function listInterviews() {
     return data
 }
 
+async function listInterviewUsers() {
+
+    const data = await client.sql`
+    SELECT distinct email, password
+    FROM interview_users
+    WHERE email = 'cp2530@nyu.edu' 
+    `;
+     
+    return data.rows[0]
+    //return data
+}
+
+
 export async function GET() {
     try {
-        const results = await listInterviews();
+        const results = await listInterviewUsers();
         return Response.json(results);
     } catch (error) {
         console.error("Error fetching interviews:", error);

@@ -1,8 +1,10 @@
 import { sql } from '@vercel/postgres'
 import {
     InterviewData,
+    User,
   
 } from './definitions'
+
 export async function fetchInterviews() {
     try {
         const interviews = await sql<InterviewData>`
@@ -67,5 +69,19 @@ export async function fetchTotalItems(): Promise<number> {
     } catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch total items');
+    }
+}
+
+export async function fetchEmailPassword() {
+    try {
+        const data = await sql<User>`
+            SELECT 
+                distinct email, password
+            FROM interview_users
+        `;
+        return data.rows;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch invoices ');
     }
 }

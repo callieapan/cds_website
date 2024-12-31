@@ -1,7 +1,8 @@
 'use server';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
-
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 
 export async function submitInterview(formData: {
   email: string
@@ -37,9 +38,28 @@ export async function submitInterview(formData: {
     return { success: true };
   } catch (error){
     console.error('Failed to submit interview', error)
-    return { success: false, error: 'Failed to submit interview ' + error.message};
+    return { success: false, error: 'Failed to submit interview '};
 
   }
   
 }
 
+
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
+  }
+}

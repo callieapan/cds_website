@@ -12,3 +12,15 @@ export type InterviewData = {
 // export type NumItem = {
 //     total_items: number;
 // }
+
+export type User = {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+  };
+
+  export type EmailPassword = {
+    email: string;
+    password: string;
+  };
