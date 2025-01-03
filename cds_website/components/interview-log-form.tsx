@@ -3,12 +3,12 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardDescriptionBlack } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-import { submitInterview } from "@/app/lib/action"
+import { submitInterview } from "@/app/lib/actions"
 
 export default function InterviewLogForm() {
   const [formData, setFormData] = useState({
@@ -200,7 +200,7 @@ export default function InterviewLogForm() {
       <Card>
         <CardHeader>
           <CardTitle>Interview Question & Answer</CardTitle>
-          <CardDescription> 
+          <CardDescriptionBlack> 
               <br/> <br/>
               Please describe the question asked and share your answer. Format:<br/> <br/>
               Number of [technical/behavior/other type] rounds:<br/> 
@@ -218,28 +218,10 @@ export default function InterviewLogForm() {
               The ML team asks you to build a feature store in table format, how would you design this table? - determine what should be the unique identifier in the table, the appropriate columns and how to deal with multiple or frequent updates of metrics/signals 
               We want to test if showing free users more of a specific paid feature would increase conversion from free to paid users. What metrics would you would use to test the hypothesis? How would you determine sample size and experiment duration?<br/> <br/>
            
-            </CardDescription>
+            </CardDescriptionBlack>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            {/* <Label htmlFor="questionAnswer">Question and Your Response</Label>
-            <p className = "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"> 
-              Please describe the question asked and share your answer. Format:<br/> <br/>
-              Number of [technical/behavior/other type] rounds:<br/> 
-              Question 1 - answer<br/> 
-              Question 2 - answer<br/> <br/>
-              If you were asked coding questions, specify what language you were asked to use, along with the details of the problem you were asked to solve, e.g. a SQL coding question that required window functions.<br/> <br/>
-              
-              Talk about what you did best, worst and what you think you could have improved on.<br/> <br/>
-              
-              Example:<br/> 
-              Number of technical rounds: 2 <br/> 
-              Number of behavioral rounds: 1 <br/> <br/>
-              
-              The metrics we measure for user growth appear to be declining, how would you determine if there is an actual decline? - use statistical tests across before and after specific periods of time
-              The ML team asks you to build a feature store in table format, how would you design this table? - determine what should be the unique identifier in the table, the appropriate columns and how to deal with multiple or frequent updates of metrics/signals 
-              We want to test if showing free users more of a specific paid feature would increase conversion from free to paid users. What metrics would you would use to test the hypothesis? How would you determine sample size and experiment duration?<br/> <br/>
-            </p> */}
             <Textarea
               id="questionAnswer"
               name="questionAnswer"

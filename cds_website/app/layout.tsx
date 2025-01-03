@@ -63,6 +63,12 @@ export default function RootLayout({
           >
             View Interviews
           </Link>
+          <Link
+            href="/update_password"
+            className="block p-2 rounded-lg hover:bg-accent hover:text-accent-foreground"
+          >
+            Update Password
+          </Link>
         </nav>
 
       {/* Main Content */}

@@ -13,8 +13,10 @@ export const authConfig = {
         return false; // Redirect unauthenticated users to login page
       } 
         // else if (isLoggedIn) {
-        // return Response.redirect(new URL('/interviews_table', nextUrl));
+        // return Response.redirect(new URL('/interviews_table', nextUrl)); // this line mreans you will always redirect a logged in user to /interviews_table/xxyy
       //}
+      
+      // Allow access to other pages
       return true;
     },
   },

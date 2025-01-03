@@ -8,11 +8,10 @@ import {
   EyeSlashIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-//import { Button } from '@/app/ui/button';
+import Link from "next/link";
 import { Button } from './button';
 import { useActionState, useState } from 'react';
-//import { authenticate } from '@/app/lib/actions';
-import { authenticate } from '@/app/lib/action';
+import { authenticate } from '@/app/lib/actions';
  
 export default function LoginForm() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -34,6 +33,12 @@ export default function LoginForm() {
         <h1 className={` mb-3 text-2xl`}>
           Please log in to continue.
         </h1>
+        <p>If this is your first time logging in, please go to the{' '} 
+            <Link href="/update_password" className="text-blue-600 hover:underline">
+                Update Password
+            </Link>{' '} 
+            page to update the default password provided by CDS alumni council to a personal password.
+        </p>
         <div className="w-full">
           <div>
             <label

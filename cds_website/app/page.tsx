@@ -1,5 +1,6 @@
 
 import InterviewLogForm from "../components/interview-log-form";
+import Link from "next/link";
 
 export default function Page() {
     return (
@@ -19,6 +20,16 @@ export default function Page() {
                 We aspire to have a high quality content in this sheet; as such we're only allowing CDS alumni and students to contribute.
                
                 Members of the CDS alumni council will be monitoring this sheet regularly for any negative content that may require moderation. If you see anything of concern, please email cds-alumni-council@nyu.edu with subject 'Interview Sharing'.
+                <br/> <br/>
+                Once you submit an entry and recieve an email notice from CDS alumni council with a default password to view other interview experiences, please go to the{' '} 
+                <Link href="/update_password" className="text-blue-600 hover:underline">
+                    Update Password
+                </Link>{' '} 
+                page to update the default password to a personal password first. Then you can go to the {' '} 
+                <Link href="/interview_table" className="text-blue-600 hover:underline">
+                    View Interviews
+                </Link>{' '} 
+                page to view all interview experiences. Thank you.
                 </p>
             </div>
             <InterviewLogForm />
