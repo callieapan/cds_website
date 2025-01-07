@@ -35,6 +35,9 @@ export async function GET() {
         return Response.json(results);
     } catch (error) {
         console.error("Error fetching interviews:", error);
-        return Response.json({ error: error.message }, { status: 500 });
+        if (error instanceof Error) {
+            return Response.json({ error: error.message }, { status: 500 });
+        }
+        return Response.json({error: "An unknown error occured"}, { status: 500 })
     }
 }
