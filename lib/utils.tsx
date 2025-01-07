@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatQuestionAnswer(text) {
+export function formatQuestionAnswer(text:string) {
   return text.split('\n').map((line, index) => (
     <React.Fragment key={index}>
       {line}
