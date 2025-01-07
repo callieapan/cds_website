@@ -2,7 +2,7 @@
 import bcrypt from 'bcrypt';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
-import { auth, signIn } from '@/auth';
+import { signIn } from '@/auth'; //auth
 import { AuthError } from 'next-auth';
 
 export async function submitInterview(formData: {

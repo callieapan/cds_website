@@ -36,39 +36,39 @@ async function seedUsers() {
 
 
 
-async function seedInterview() {
-  await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-  await client.sql`
-    CREATE TABLE IF NOT EXISTS interview (
-      entry_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+// async function seedInterview() {
+//   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+//   await client.sql`
+//     CREATE TABLE IF NOT EXISTS interview (
+//       entry_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       
-      email TEXT NOT NULL UNIQUE,
-      date TEXT NOT NULL,
-      company TEXT NOT NULL,
-      position TEXT NOT NULL,
-      round TEXT NOT NULL,
-      otherRound VARCHAR(225),
-      questionAnswer TEXT NOT NULL,
-      userName VARCHAR(255),
-      contactInfo VARCHAR(255)
+//       email TEXT NOT NULL UNIQUE,
+//       date TEXT NOT NULL,
+//       company TEXT NOT NULL,
+//       position TEXT NOT NULL,
+//       round TEXT NOT NULL,
+//       otherRound VARCHAR(225),
+//       questionAnswer TEXT NOT NULL,
+//       userName VARCHAR(255),
+//       contactInfo VARCHAR(255)
       
-    );
-  `;
+//     );
+//   `;
 
-  const insertedInterview = await Promise.all(
-    interview_entry.map(async (entry) => {
+//   const insertedInterview = await Promise.all(
+//     interview_entry.map(async (entry) => {
       
-      return client.sql`
-        INSERT INTO interview (email, date, company, position, round, otherRound, questionAnswer, userName, contactInfo)
-        VALUES (${entry.email}, ${entry.date}, ${entry.company}, ${entry.position}, 
-                ${entry.round}, ${entry.otherRound}, ${entry.questionAnswer}, ${entry.userName}, ${entry.contactInfo})
-        ON CONFLICT (email, company, position ) DO NOTHING;
-      `;
-    }),
-  );
+//       return client.sql`
+//         INSERT INTO interview (email, date, company, position, round, otherRound, questionAnswer, userName, contactInfo)
+//         VALUES (${entry.email}, ${entry.date}, ${entry.company}, ${entry.position}, 
+//                 ${entry.round}, ${entry.otherRound}, ${entry.questionAnswer}, ${entry.userName}, ${entry.contactInfo})
+//         ON CONFLICT (email, company, position ) DO NOTHING;
+//       `;
+//     }),
+//   );
 
-  return insertedInterview;
-}
+//   return insertedInterview;
+// }
 
 
 

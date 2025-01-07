@@ -23,7 +23,7 @@ export default function InterviewLogForm() {
     contactInfo: ""
   })
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  //const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setsSubmitted] = useState(false);
 
   const interviewRounds = [
@@ -35,7 +35,7 @@ export default function InterviewLogForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
+    //setIsSubmitting(true)
 
     try {
       const result = await submitInterview(formData)
@@ -49,7 +49,7 @@ export default function InterviewLogForm() {
         console.error('Error submitting form', error)
         alert ('Failed to submit the form. Please try again')
       } finally {
-        setIsSubmitting(false)
+        //setIsSubmitting(false)
       }
   }
 
@@ -246,7 +246,7 @@ export default function InterviewLogForm() {
           <CardHeader>
             <CardTitle>Personal Information (Optional)</CardTitle>
             <CardDescription> 
-            If you'd like to disclose your name or your contact information so others may reach out for more questions or share interview experiences,  please do so here.
+            If you&apos;d like to disclose your name or your contact information so others may reach out for more questions or share interview experiences,  please do so here.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -269,7 +269,7 @@ export default function InterviewLogForm() {
         <Card>
           <CardHeader>
             <CardTitle>Contact Details (Optional)</CardTitle>
-            <CardDescription>If you'd like to disclose your name or your contact information so others may reach out for more questions or share interview experiences,  please do so here.</CardDescription>
+            <CardDescription>If you&apos;d like to disclose your name or your contact information so others may reach out for more questions or share interview experiences,  please do so here.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">

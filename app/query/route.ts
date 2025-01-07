@@ -3,18 +3,18 @@ import { fetchTotalItems } from "../lib/data";
 
 const client = await db.connect();
 
-async function listInterviews() {
+// async function listInterviews() {
 
-    // const data = await client.sql`
-    // SELECT *
-    // FROM interview
-    // WHERE lower(company) like 'orange' -- must use single quotes
+//     // const data = await client.sql`
+//     // SELECT *
+//     // FROM interview
+//     // WHERE lower(company) like 'orange' -- must use single quotes
     
-    // `;
-    const data = await fetchTotalItems();
-    //return data.rows;
-    return data
-}
+//     // `;
+//     const data = await fetchTotalItems();
+//     //return data.rows;
+//     return data
+// }
 
 async function listInterviewUsers() {
 

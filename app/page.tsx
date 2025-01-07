@@ -14,12 +14,12 @@ export default function Page() {
                 We encourage alumni to share their experience with each other; it is optional if you want to leave your contact information or be anonymous in providing feedback. If you choose to leave your contact information, others may reach out to you for a more in depth exchange, this could be a win-win for you as well. We leave it up to you.
                 <br/> <br/>
                 <span className="font-bold">Confidentiality:</span><br/> <br/>
-                Alumni and students are responsible for adhering to any confidential agreements or NDAs they've signed during interviews. Please exercise judgement when sharing.
+                Alumni and students are responsible for adhering to any confidential agreements or NDAs they&apos;ve signed during interviews. Please exercise judgement when sharing.
                 <br/> <br/>
                 <span className="font-bold">Access:</span><br/> <br/>
-                We aspire to have a high quality content in this sheet; as such we're only allowing CDS alumni and students to contribute.
+                We aspire to have a high quality content in this sheet; as such we&apos;re only allowing CDS alumni and students to contribute.
                
-                Members of the CDS alumni council will be monitoring this sheet regularly for any negative content that may require moderation. If you see anything of concern, please email cds-alumni-council@nyu.edu with subject 'Interview Sharing'.
+                Members of the CDS alumni council will be monitoring this sheet regularly for any negative content that may require moderation. If you see anything of concern, please email cds-alumni-council@nyu.edu with subject &apos;Interview Sharing&apos;.
                 <br/> <br/>
                 Once you submit an entry and recieve an email notice from CDS alumni council with a default password to view other interview experiences, please go to the{' '} 
                 <Link href="/update_password" className="text-blue-600 hover:underline">

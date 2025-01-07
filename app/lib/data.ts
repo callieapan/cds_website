@@ -26,7 +26,7 @@ export async function fetchInterviews() {
     }
 }
 
-const ITEMS_PER_PAGE = 15;
+//const ITEMS_PER_PAGE = 15;
 export async function fetchFilteredInterviews(
     query:string,
     currentPage: number,

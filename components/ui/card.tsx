@@ -63,7 +63,7 @@ const CardDescriptionBlack = React.forwardRef<
     {...props}
   />
 ))
-CardDescription.displayName = "CardDescriptionBlack"
+CardDescriptionBlack.displayName = "CardDescriptionBlack"
 
 
 
