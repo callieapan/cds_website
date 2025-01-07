@@ -46,7 +46,10 @@ export default function Page () {
                 }
             } catch (err) {
                 setError('An error occured. Please try again.')
-                console.log(err.message || 'updatePassword result threw an error')
+                if (err instanceof Error){
+                  console.log(err.message)
+                } 
+                console.log( 'updatePassword result threw an error')
             } 
         };  
 
