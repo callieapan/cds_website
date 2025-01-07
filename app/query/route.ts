@@ -1,5 +1,5 @@
 import { db } from "@vercel/postgres";
-import { fetchTotalItems } from "../lib/data";
+//import { fetchTotalItems } from "../lib/data";
 
 const client = await db.connect();
 
