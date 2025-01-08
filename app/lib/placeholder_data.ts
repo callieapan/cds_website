@@ -17,18 +17,32 @@ const interview_entry = [
   ];
 
 const users = [
-  {
-    // id: '410544b2-4001-4271-9855-fec4b6a6442a',
-    name: 'calliea',
-    email: 'cp2530@nyu.edu',
-    password: '123456',
-  },
+  // {
+  //   // id: '410544b2-4001-4271-9855-fec4b6a6442a',
+  //   name: 'calliea',
+  //   email: 'cp2530@nyu.edu',
+  //   password: '123456',
+  // },
   {
     // id: '410544b2-4001-4271-9855-fec4b6a6442a',
     name: 'yash',
     email: 'yd1282@nyu.edu',
-    password: '456789',
+    password: 'nyucds2025',
   },
+  {
+    // id: '410544b2-4001-4271-9855-fec4b6a6442a',
+    name: 'elliott',
+    email: 'elliotgsilva@gmail.com',
+    password: 'nyucds2025',
+  },
+  {
+    // id: '410544b2-4001-4271-9855-fec4b6a6442a',
+    name: 'elliott',
+    email: 'elliotgsilva@gmail.com',
+    password: 'nyucds2025',
+  },
+
+
 ];
 export { interview_entry, users };
   
