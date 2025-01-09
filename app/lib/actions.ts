@@ -107,4 +107,20 @@ export async function updatePassword (email:string, currentPassword: string, new
   }
 }
 
- 
+export async function adduser(username: string, email:string, password: string) {
+  try {
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await sql`INSERT INTO interview_users (name, email, password)
+        VALUES (${username}, ${email}, ${hashedPassword})
+        ON CONFLICT (email) DO NOTHING;
+      `;
+    return { success: true };
+  } catch (error){
+    console.error('Failed to add user', error)
+    return  { success: false, message: 'Failed to add user'}; 
+
+  }
+
+
+}
