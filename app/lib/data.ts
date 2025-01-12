@@ -9,7 +9,7 @@ export async function fetchInterviews() {
     try {
         const interviews = await sql<InterviewData>`
             SELECT 
-                date,
+                date_,
                 company,
                 position,  
                 round,
@@ -17,7 +17,7 @@ export async function fetchInterviews() {
                 username,
                 contactinfo 
             FROM interview
-            ORDER BY date ASC
+            ORDER BY date_ DESC
         `;
         return interviews.rows;
     } catch (error) {
@@ -48,7 +48,7 @@ export async function fetchFilteredInterviews(
             FROM interview
             WHERE 
                 company ILIKE ${`%${query}%`}
-            ORDER BY date ASC
+            ORDER BY date DESC
             LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
         `;
     return interviews.rows;

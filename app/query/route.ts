@@ -1,5 +1,6 @@
 import { db } from "@vercel/postgres";
-//import { fetchTotalItems } from "../lib/data";
+import { fetchInterviews } from "../lib/data";
+import { sendEmail } from "../lib/actions";
 
 const client = await db.connect();
 
@@ -31,7 +32,9 @@ async function listInterviewUsers() {
 
 export async function GET() {
     try {
-        const results = await listInterviewUsers();
+        //const results = await listInterviewUsers();
+        //const results = await fetchInterviews();
+        const results = await sendEmail("NYU alum", "calliea.pan@gmail.com", "nyucds2025")
         return Response.json(results);
     } catch (error) {
         console.error("Error fetching interviews:", error);

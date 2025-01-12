@@ -10,7 +10,7 @@ import {
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
 import { useState } from 'react';
-import { adduser } from '@/app/lib/actions';
+import { adduser, sendEmail } from '@/app/lib/actions';
  
 export default function AddUserForm() {
 
@@ -31,7 +31,7 @@ export default function AddUserForm() {
     e.preventDefault();
 
     try {
-        // need to change the function
+       // add new user to database
         const result = await adduser(username, email, password);
         if (result.success) {
             setSuccess(`new user ${username} added!`);
@@ -47,6 +47,18 @@ export default function AddUserForm() {
             } 
             console.log( 'adding new user threw error')
         } 
+
+        try {
+            // send an auto email to the user giving them the new log in and password
+            const result = await sendEmail(username, email, password);
+            } catch (err) {
+                if (err instanceof Error){
+                  console.log(err.message)
+                } 
+                console.log( 'sending new user notification email threw error')
+            } 
+
+
     };
 
 
@@ -59,12 +71,6 @@ export default function AddUserForm() {
         <h1 className={` mb-3 text-2xl`}>
           Please enter new user default info
         </h1>
-        {/* <p>If this is your first time logging in, please go to the{' '} 
-            <Link href="/update_password" className="text-blue-600 hover:underline">
-                Update Password
-            </Link>{' '} 
-            page to update the default password provided by CDS alumni council to a personal password.
-        </p> */}
         <div className="w-full">
         <div>
             <label

@@ -1,6 +1,7 @@
 export type InterviewData = {
     entry_id: string; // Assuming entry_id is a string, adjust according to your actual data schema
-    date: string; // Date as string, could be converted to Date type if necessary within the component
+    //date: string; // Date as string, could be converted to Date type if necessary within the component
+    date: Date; // date as Date datatype
     company: string;
     position: string;
     round: string;
