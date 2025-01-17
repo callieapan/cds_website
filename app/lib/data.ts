@@ -1,6 +1,7 @@
 import { sql } from '@vercel/postgres'
 import {
     InterviewData,
+    InterviewDataAll,
     User,
   
 } from './definitions'
@@ -9,7 +10,8 @@ export async function fetchInterviews() {
     try {
         const interviews = await sql<InterviewData>`
             SELECT 
-                date_,
+                entry_id,
+                date,
                 company,
                 position,  
                 round,
@@ -17,14 +19,43 @@ export async function fetchInterviews() {
                 username,
                 contactinfo 
             FROM interview
-            ORDER BY date_ DESC
+            WHERE approved = TRUE
+            ORDER BY date DESC
         `;
         return interviews.rows;
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch invoices ');
+        throw new Error('Failed to fetch approved interviews ');
     }
 }
+
+export async function fetchUnapprovedInterviews() {
+    try {
+        const interviews = await sql<InterviewDataAll>`
+            SELECT 
+                entry_id,
+                date,
+                company,
+                position,  
+                round,
+                questionanswer,
+                username,
+                contactinfo, 
+                approved, 
+                approver
+            FROM interview
+            WHERE approved = False
+            ORDER BY date DESC
+        `;
+        return interviews.rows;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch unapproved interviews');
+    }
+}
+
+
+
 
 //const ITEMS_PER_PAGE = 15;
 export async function fetchFilteredInterviews(
@@ -48,13 +79,14 @@ export async function fetchFilteredInterviews(
             FROM interview
             WHERE 
                 company ILIKE ${`%${query}%`}
+                and approved = TRUE
             ORDER BY date DESC
             LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
         `;
     return interviews.rows;
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch invoices.');
+        throw new Error('Failed to fetch approved interviews.');
     }
 
 }
@@ -82,6 +114,6 @@ export async function fetchEmailPassword() {
         return data.rows;
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch invoices ');
+        throw new Error('Failed to fetch email and passwords ');
     }
 }

@@ -10,7 +10,7 @@ import {
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
 import { useState } from 'react';
-import { adduser, sendEmail } from '@/app/lib/actions';
+import { addUser, sendEmail } from '@/app/lib/actions';
  
 export default function AddUserForm() {
 
@@ -32,7 +32,7 @@ export default function AddUserForm() {
 
     try {
        // add new user to database
-        const result = await adduser(username, email, password);
+        const result = await addUser(username, email, password);
         if (result.success) {
             setSuccess(`new user ${username} added!`);
             setError('');  

@@ -4,7 +4,8 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { signIn } from '@/auth'; //auth
 import { AuthError } from 'next-auth';
-import nodemailer from 'nodemailer';
+//import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 
 
@@ -117,7 +118,7 @@ export async function updatePassword (email:string, currentPassword: string, new
   }
 }
 
-export async function adduser(username: string, email:string, password: string) {
+export async function addUser(username: string, email:string, password: string) {
   try {
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -131,6 +132,29 @@ export async function adduser(username: string, email:string, password: string) 
     return  { success: false, message: 'Failed to add user'}; 
 
   }
+
+
+}
+
+export async function approveInterview(
+  selectedIds: Set<string>,
+  approver: string) { 
+    try {
+      // Convert the Set to an array
+      const ids = Array.from(selectedIds).join(',');
+      
+      await sql`
+          UPDATE interview
+          SET approved = TRUE, approver = ${approver}
+          WHERE id IN (${ids})
+      `;
+        
+        return { success: true };
+      } catch (error){
+        console.error('Failed to submit approved interview', error)
+        return { success: false, error: 'Failed to submit approved interview '};
+
+      }
 
 
 }
@@ -189,57 +213,100 @@ export async function adduser(username: string, email:string, password: string) 
 //     }
 //   }
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+/////resend implementation
+//const RESEND_API_KEY = process.env.RESEND_API_KEY;
+
+// export async function sendEmail(
+//   // //recipientEmail
+//   // username: string, 
+//   // email:string, 
+//   // password: string  
+// ) 
+
+// {
+//   if (!RESEND_API_KEY) {
+//     throw new Error('RESEND_API_KEY is not set');
+//   }
+
+//   const message = "Hello, here is your new login info...";
+
+//   try {
+//     const res = await fetch('https://api.resend.com/emails', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+//       },
+//       body: JSON.stringify({
+//         from: 'calliea.pan@gmail.com',//process.env.EMAIL_FROM_USER, // Replace with your verified domain
+//         to: 'calliea.pan@gmail.com',
+//         subject: 'Welcome to CDS Interview Sharing',
+//         html: `<p>Thank you NYU Alumni for adding to our interview sharing repository!<br>
+// //                     We greatly appreciate your contribution.<br><br>
+// //                     
+// //                     Here is your temporary login: aaa and password: bbb. <br><br>
+// //                     Please log in to the Update Password page to update your password or the View Interview page to 
+// //                     see other alumni interview experiences.<br><br>
+  
+// //                     Best of luck in your career search!<br><br>
+  
+// //                     NYU CDS Alumni Council</p>`,
+//       }),
+//     });
+
+//     const data = await res.json();
+
+//     if (res.ok) {
+//       console.log('Email sent successfully:', data);
+//       return { success: true, message: 'Email sent successfully' };
+//     } else {
+//       console.error('Failed to send email:', data);
+//       return { success: false, message: 'Failed to send email' };
+//     }
+//   } catch (error) {
+//     console.error('Error sending email:', error);
+//     return { success: false, message: 'Error sending email' };
+//   }
+// }
+
 
 export async function sendEmail(
-  //recipientEmail
   username: string, 
   email:string, 
   password: string  
 ) {
-  if (!RESEND_API_KEY) {
-    throw new Error('RESEND_API_KEY is not set');
-  }
-
-  const message = "Hello, here is your new login info...";
-
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: process.env.EMAIL_FROM_USER, // Replace with your verified domain
-        to: email,
-        subject: 'Welcome to CDS Interview Sharing',
-        html: `<p>Thank you ${username} for adding to our interview sharing repository!<br>
-//                     We greatly appreciate your contribution.<br><br>
-//                     
-//                     Here is your temporary login: ${email} and password: ${password}. <br><br>
-//                     Please log in to the Update Password page to update your password or the View Interview page to 
-//                     see other alumni interview experiences.<br><br>
+  const resend = new Resend(process.env.RESEND_API_KEY);
   
-//                     Best of luck in your career search!<br><br>
-  
-//                     NYU CDS Alumni Council</p>`,
-      }),
+  try{
+    const htmlContent = `
+      <p>Thank you, NYU Alumni <strong>${username}</strong>, for adding to our interview sharing repository!</p>
+      <p>Here is your temporary login information:</p>
+      <ul>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Password:</strong> ${password}</li>
+      </ul>
+      <p>Please log in to the following pages:</p>
+      <ul>
+        <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/login?callbackUrl=https%3A%2F%2Fv0-cds-website-anauxk3oqku.vercel.app%2Finterviews_table">Update Password</a></li>
+        <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/update_password">View Interview Experiences</a></li>
+      </ul>
+      <p>Best of luck in your career search!</p>
+      <p>NYU CDS Alumni Council</p>
+    `;
+
+
+
+    resend.emails.send({
+      from: 'calliea.pan@gmail.com',
+      //'onboarding@resend.dev',
+      to: email,
+      subject: 'welcome to CDS Interview Sharing from calliea',
+      html: htmlContent
+    
     });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      console.log('Email sent successfully:', data);
-      return { success: true, message: 'Email sent successfully' };
-    } else {
-      console.error('Failed to send email:', data);
-      return { success: false, message: 'Failed to send email' };
-    }
+    return { success: true, message: 'Email sent successfully' };
   } catch (error) {
-    console.error('Error sending email:', error);
-    return { success: false, message: 'Error sending email' };
+    console.error('Failed to send email:', error);
+    return { success: false, message: 'Email was not sense' };
   }
 }
-
-

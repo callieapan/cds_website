@@ -34,7 +34,8 @@ export async function GET() {
     try {
         //const results = await listInterviewUsers();
         //const results = await fetchInterviews();
-        const results = await sendEmail("NYU alum", "calliea.pan@gmail.com", "nyucds2025")
+        const results = await sendEmail("christine", "calliea.pan@gmail.com", "nyucds2025")
+        
         return Response.json(results);
     } catch (error) {
         console.error("Error fetching interviews:", error);
