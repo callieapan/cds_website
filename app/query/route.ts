@@ -3,7 +3,7 @@ import { sql } from '@vercel/postgres';
 ///import { fetchInterviews } from "../lib/data";
 //import { approveInterview, sendEmail } from "../lib/actions";
 
-const client = await db.connect();
+//const client = await db.connect();
 
 
 // async function listInterviewUsers() {

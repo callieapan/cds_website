@@ -10,7 +10,7 @@ import {
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
 import { useState } from 'react';
-import { addUser, sendEmail } from '@/app/lib/actions';
+import { addUser} from '@/app/lib/actions'; 
  
 export default function AddUserForm() {
 
@@ -48,15 +48,15 @@ export default function AddUserForm() {
             console.log( 'adding new user threw error')
         } 
 
-        try {
-            // send an auto email to the user giving them the new log in and password
-            const result = await sendEmail(username, email, password);
-            } catch (err) {
-                if (err instanceof Error){
-                  console.log(err.message)
-                } 
-                console.log( 'sending new user notification email threw error')
-            } 
+        // try {
+        //     // send an auto email to the user giving them the new log in and password
+        //     const result = await sendEmail(username, email, password); //need to create this function
+        //     } catch (err) {
+        //         if (err instanceof Error){
+        //           console.log(err.message)
+        //         } 
+        //         console.log( 'sending new user notification email threw error')
+        //     } 
 
 
     };
