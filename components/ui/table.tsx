@@ -100,14 +100,12 @@ export default async function InterviewTable({
                         </thead>
                         {interviews?.map((row, index) => (
                             <tbody key={index} className="bg-white">
-                                <tr key={row.id} className="border-b py-3 text-sm last:border-none">
+                                <tr key={row.entry_id} className="border-b py-3 text-sm last:border-none">
                                     <td className="whitespace-nowrap px-3 py-3">{formatDateToLocal(row.date)}</td>
                                     <td className="whitespace-nowrap px-3 py-3">{row.company}</td>
                                     <td className="whitespace-nowrap px-3 py-3">{row.position}</td>
                                     <td className="whitespace-nowrap px-3 py-3">{row.round}</td>
-                                    {/* <td className="whitespace-normal px-3 py-3" style={{ width: '200px' }}>{formatQuestionAnswer(row.questionanswer)}</td> */}
                                     <td className="whitespace-normal px-3 py-3 break-words">{formatQuestionAnswer(row.questionanswer)}</td>
-
                                     <td className="whitespace-nowrap px-3 py-3">{row.username}</td>
                                     <td className="whitespace-nowrap px-3 py-3">{row.contactinfo}</td>
                                 </tr>

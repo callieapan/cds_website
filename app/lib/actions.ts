@@ -82,13 +82,6 @@ export async function authenticate(
 }
 
 export async function updatePassword (email:string, currentPassword: string, newPassword:string) {
-  //how come here we don't use props,it just regular function parameters
-  // const session = await auth(); //explain why this is an await
-  // if (!session?.user?.email) {
-  //   return {success: false, message: 'User not authenticated.'};
-  // }
-
-  // const email = session.user.email;
 
   try {
     // fetch the user's current password hash from the database
@@ -141,133 +134,22 @@ export async function approveInterview(
   approver: string) { 
     try {
       // Convert the Set to an array
-      const ids = Array.from(selectedIds).join(',');
-      
+      const ids: string[] = Array.from(selectedIds);
       await sql`
           UPDATE interview
           SET approved = TRUE, approver = ${approver}
-          WHERE id IN (${ids})
+          WHERE entry_id::text = ANY(${ids})
       `;
         
         return { success: true };
       } catch (error){
-        console.error('Failed to submit approved interview', error)
+        console.error('Failed to sql update interview', error)
         return { success: false, error: 'Failed to submit approved interview '};
 
       }
 
 
 }
-
-// Function to send an email
-// export async function sendEmail(
-//   //const sendEmail = async (
-//       username: string, 
-//       email:string, 
-//       password: string
-//       //text: string
-//     ) {
-//     // Create a transporter object using your email service's SMTP settings
-//     const transporter = nodemailer.createTransport({
-//       service: 'gmail', // Example: Gmail, Yahoo, etc.
-//       auth: {
-//         user: process.env.EMAIL_FROM_USER, // Your email address
-//         pass: process.env.EMAIL_FROM_PASSWORD, // Your email password or app-specific password
-//         //user: "calliea.pan@gmail.com",
-//         //pass: "HuanShao1982!",
-
-//       },
-//     });
-  
-//     // Construct the email message
-//     const email_text = `Thank you ${username} for adding to our interview sharing repository!\n
-//                     We greatly appreciate your contribution.\n
-//                     \n
-//                     Here is your temporary login: ${email} and password: ${password}. \n\n
-//                     Please log in to the Update Password page to update your password or the View Interview page to 
-//                     see other alumni interview experiences. \n
-  
-//                     Best of luck in your career search!\n
-  
-//                     NYU CDS Alumni Council\n`
-  
-  
-  
-//     // Define the email options
-//     const mailOptions = {
-//       from: process.env.EMAIL_FROM_USER, // Sender address
-//       to: email, // Recipient address
-//       subject: "Welcome to CDS Interview Sharing", // Email subject
-//       text: email_text, // Email body
-//     };
-  
-//     // Send the email
-//     try {
-//       await transporter.sendMail(mailOptions);
-//       console.log('Email sent successfully');
-//       return { success: true };
-//     } catch (error) {
-//       console.error('Failed to send email:', error);
-//       //throw new Error('Failed to send email');
-//       return { success: false, message: 'failed to send email.' };
-//     }
-//   }
-
-/////resend implementation
-//const RESEND_API_KEY = process.env.RESEND_API_KEY;
-
-// export async function sendEmail(
-//   // //recipientEmail
-//   // username: string, 
-//   // email:string, 
-//   // password: string  
-// ) 
-
-// {
-//   if (!RESEND_API_KEY) {
-//     throw new Error('RESEND_API_KEY is not set');
-//   }
-
-//   const message = "Hello, here is your new login info...";
-
-//   try {
-//     const res = await fetch('https://api.resend.com/emails', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-//       },
-//       body: JSON.stringify({
-//         from: 'calliea.pan@gmail.com',//process.env.EMAIL_FROM_USER, // Replace with your verified domain
-//         to: 'calliea.pan@gmail.com',
-//         subject: 'Welcome to CDS Interview Sharing',
-//         html: `<p>Thank you NYU Alumni for adding to our interview sharing repository!<br>
-// //                     We greatly appreciate your contribution.<br><br>
-// //                     
-// //                     Here is your temporary login: aaa and password: bbb. <br><br>
-// //                     Please log in to the Update Password page to update your password or the View Interview page to 
-// //                     see other alumni interview experiences.<br><br>
-  
-// //                     Best of luck in your career search!<br><br>
-  
-// //                     NYU CDS Alumni Council</p>`,
-//       }),
-//     });
-
-//     const data = await res.json();
-
-//     if (res.ok) {
-//       console.log('Email sent successfully:', data);
-//       return { success: true, message: 'Email sent successfully' };
-//     } else {
-//       console.error('Failed to send email:', data);
-//       return { success: false, message: 'Failed to send email' };
-//     }
-//   } catch (error) {
-//     console.error('Error sending email:', error);
-//     return { success: false, message: 'Error sending email' };
-//   }
-// }
 
 
 export async function sendEmail(

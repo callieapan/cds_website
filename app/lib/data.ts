@@ -34,6 +34,7 @@ export async function fetchUnapprovedInterviews() {
         const interviews = await sql<InterviewDataAll>`
             SELECT 
                 entry_id,
+                email,
                 date,
                 company,
                 position,  

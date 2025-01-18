@@ -1,44 +1,45 @@
 import { db } from "@vercel/postgres";
-import { fetchInterviews } from "../lib/data";
-import { sendEmail } from "../lib/actions";
+import { sql } from '@vercel/postgres';
+///import { fetchInterviews } from "../lib/data";
+//import { approveInterview, sendEmail } from "../lib/actions";
 
 const client = await db.connect();
 
-// async function listInterviews() {
 
-//     // const data = await client.sql`
-//     // SELECT *
-//     // FROM interview
-//     // WHERE lower(company) like 'orange' -- must use single quotes
-    
-//     // `;
-//     const data = await fetchTotalItems();
-//     //return data.rows;
-//     return data
+// async function listInterviewUsers() {
+
+//     const data = await sql`
+//     SELECT distinct email, password
+//     FROM interview_users
+//     WHERE email = 'cp2530@nyu.edu' 
+//     `;
+     
+//     return data.rows[0]
+//     //return data
 // }
 
-async function listInterviewUsers() {
+async function testApproveInterview() {
+    const mySet = new Set(['77af5e6f-60b7-4812-8985-8300b20538f9', 'b4b432cc-5ba7-492d-a1eb-e6b64a89698f']);
+    const ids: string[] = Array.from(mySet);
+    const data = await sql`
+        SELECT entry_id, company, position, round, date, approved, approver    
+        FROM interview
+        WHERE entry_id::text = ANY(${ids})
+    `
 
-    const data = await client.sql`
-    SELECT distinct email, password
-    FROM interview_users
-    WHERE email = 'cp2530@nyu.edu' 
-    `;
-     
-    return data.rows[0]
-    //return data
+    return data
+    
 }
 
 
 export async function GET() {
     try {
-        //const results = await listInterviewUsers();
-        //const results = await fetchInterviews();
-        const results = await sendEmail("christine", "calliea.pan@gmail.com", "nyucds2025")
-        
+
+        const results = await testApproveInterview();
         return Response.json(results);
+    
     } catch (error) {
-        console.error("Error fetching interviews:", error);
+        console.error("Error approving interviews:", error);
         if (error instanceof Error) {
             return Response.json({ error: error.message }, { status: 500 });
         }

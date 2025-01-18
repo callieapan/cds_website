@@ -6,8 +6,8 @@ import { fetchTotalItems, fetchFilteredInterviews } from "@/app/lib/data";
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from '@/auth';
 
-export default async function Page(props: { // why does this one have props? while other function fetchFilteredIntervew just takes in the params
-    searchParams?: Promise<{ // why is here Promise
+export default async function Page(props: { 
+    searchParams?: Promise<{  
         query?: string;
         page?: string;
     }>;
