@@ -32,7 +32,12 @@ export type User = {
     password: string;
   };
 
-  export type EmailPassword = {
+export type EmailPassword = {
     email: string;
     password: string;
   };
+
+export type Password = {
+    password: string;
+  };
+

@@ -1,13 +1,11 @@
 'use server';
 import bcrypt from 'bcrypt';
-import { sql } from '@vercel/postgres';
+//import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { signIn } from '@/auth'; //auth
 import { AuthError } from 'next-auth';
-//import nodemailer from 'nodemailer';
-//import { Resend } from 'resend';
-
-
+import { queryDatabase, queryDatabaseTypeSafe } from '../lib/db';
+import { Password } from './definitions';
 
 export async function submitInterview(formData: {
   email: string
@@ -27,21 +25,27 @@ export async function submitInterview(formData: {
     // Convert date to YYYY-MM-DD format if necessary
     const formattedDate = new Date(formData.date).toISOString().split('T')[0];
 
-    await sql`
+    const query = `
         INSERT INTO interview (email, date, company, position, round, otherround, questionanswer, username, contactInfo)
-        VALUES (${formData.email},
-        ${formattedDate},
-        ${formData.company},
-        ${formData.position},
-        ${round},
-        ${formData.otherRound || null},
-        ${formData.questionAnswer},
-        ${formData.userName || null},
-        ${formData.contactInfo || null}
-        )
+        VALUES ($1, $2, $3, $4, $5,$6, $7, $8, $9)
         ON CONFLICT (email, company, position ) DO NOTHING;
         `;
     
+    // Prepare the query parameters
+    const queryParams = [
+      formData.email,
+      formattedDate,
+      formData.company,
+      formData.position,
+      round,
+      formData.otherRound || null,
+      formData.questionAnswer,
+      formData.userName || null,
+      formData.contactInfo || null,
+    ];
+
+    await queryDatabase(query, queryParams)
+    //revalidate path after inserting new intervew into database
     revalidatePath('/interview_table')
     return { success: true };
   } catch (error){
@@ -81,12 +85,15 @@ export async function updatePassword (email:string, currentPassword: string, new
 
   try {
     // fetch the user's current password hash from the database
-    const user = await sql`SELECT password from interview_users where email=${email}`;
-    if (user.rows.length === 0) {
+    
+    let query = `SELECT password from interview_users where email=$1`;
+    const user = await queryDatabaseTypeSafe<Password>(query, [email])
+    
+    if (user.length === 0) { //user.rows.length
       return {success: false, message: 'User not found.'};
     }
 
-    const currentPasswordHash = user.rows[0].password;
+    const currentPasswordHash = user[0].password; //user.rows[0].password;
 
     // Verify the current password
     const isCurrentPasswordValid = await bcrypt.compare(currentPassword, currentPasswordHash);
@@ -98,7 +105,9 @@ export async function updatePassword (email:string, currentPassword: string, new
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
 
     // Update the password in the database
-    await sql`UPDATE interview_users SET password = ${newPasswordHash} WHERE email = ${email}`;
+   
+    query = `UPDATE interview_users SET password = $1 WHERE email = $2`;
+    await queryDatabase(query, [newPasswordHash, email])
 
     return { success: true };
   } catch (error) {
@@ -111,10 +120,14 @@ export async function addUser(username: string, email:string, password: string) 
   try {
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await sql`INSERT INTO interview_users (name, email, password)
-        VALUES (${username}, ${email}, ${hashedPassword})
-        ON CONFLICT (email) DO NOTHING;
-      `;
+    const queryParam = [username, email, hashedPassword];
+    const placeholders = queryParam.map((_, index) => `$${index+1}`).join(`,`)
+    let query = `INSERT INTO interview_users (name, email, password)
+    VALUES (${placeholders})
+    ON CONFLICT (email) DO NOTHING;
+    `; 
+    await queryDatabase (query,queryParam);
+
     return { success: true };
   } catch (error){
     console.error('Failed to add user', error)
@@ -132,13 +145,19 @@ export async function approveInterview(
       // Convert the Set to an array
       //const ids: string[] = Array.from(selectedIds);
       const ids = Array.from(selectedIds);
-      const idstr = ids.map(name_=>`'${name_}'`).join(',');
-      await sql`
+       
+      const placeholders = ids.map((_, index) =>`$${index + 2}`).join(', '); 
+      //console.log(placeholders)
+
+      const query =`
           UPDATE interview
-          SET approved = TRUE, approver = ${approver}
-          WHERE entry_id::text in (${idstr})
+          SET approved = TRUE, approver = $1
+          WHERE entry_id::text in (${placeholders})
       `;
-        
+
+        // Execute the query
+      const data = await queryDatabase(query, [approver, ...ids]);
+
         return { success: true };
       } catch (error){
         console.error('Failed to sql update interview', error)
@@ -149,7 +168,8 @@ export async function approveInterview(
 
 }
 
-
+// COMMENT OUT BEFORE GIT
+//SEND GRID, MAIL GUN
 // export async function sendEmail(
 //   username: string, 
 //   email:string, 

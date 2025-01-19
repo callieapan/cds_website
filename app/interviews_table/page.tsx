@@ -2,7 +2,7 @@
 import Search from '../../components/ui/search'
 import InterviewTable from '@/components/ui/table';
 import { Suspense } from 'react';
-import { fetchTotalItems, fetchFilteredInterviews } from "@/app/lib/data";
+import { fetchTotalApprovedItems, fetchFilteredInterviews } from "@/app/lib/data";
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from '@/auth';
 
@@ -17,7 +17,7 @@ export default async function Page(props: {
     const query = searchParams?.query || ''; // If searchParams or query is undefined, use ''
     const currentPage = Number(searchParams?.page) || 1; // If searchParams or page is undefined, use 1
     const ITEMS_PER_PAGE = 15;
-    const totalItems = await fetchTotalItems(); // Fetch total items from the database
+    const totalItems = await fetchTotalApprovedItems(); // Fetch total items from the database
     const totalPages = Math.ceil(Number(totalItems) / ITEMS_PER_PAGE);
     const interviews = await fetchFilteredInterviews(query, currentPage, ITEMS_PER_PAGE);
     
