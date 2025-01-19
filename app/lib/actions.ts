@@ -122,7 +122,7 @@ export async function addUser(username: string, email:string, password: string) 
     const hashedPassword = await bcrypt.hash(password, 10);
     const queryParam = [username, email, hashedPassword];
     const placeholders = queryParam.map((_, index) => `$${index+1}`).join(`,`)
-    let query = `INSERT INTO interview_users (name, email, password)
+    const query = `INSERT INTO interview_users (name, email, password)
     VALUES (${placeholders})
     ON CONFLICT (email) DO NOTHING;
     `; 
@@ -156,7 +156,7 @@ export async function approveInterview(
       `;
 
         // Execute the query
-      const data = await queryDatabase(query, [approver, ...ids]);
+      await queryDatabase(query, [approver, ...ids]);
 
         return { success: true };
       } catch (error){
