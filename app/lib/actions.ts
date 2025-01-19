@@ -132,10 +132,11 @@ export async function approveInterview(
       // Convert the Set to an array
       //const ids: string[] = Array.from(selectedIds);
       const ids = Array.from(selectedIds);
+      const idstr = ids.map(name_=>`'${name_}'`).join(',');
       await sql`
           UPDATE interview
           SET approved = TRUE, approver = ${approver}
-          WHERE entry_id::text = ANY(${ids}::text[])
+          WHERE entry_id::text in (${idstr})
       `;
         
         return { success: true };
