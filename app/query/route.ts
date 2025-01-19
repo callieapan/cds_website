@@ -20,11 +20,14 @@ import { sql } from '@vercel/postgres';
 
 async function testApproveInterview() {
     const mySet = new Set(['77af5e6f-60b7-4812-8985-8300b20538f9', 'b4b432cc-5ba7-492d-a1eb-e6b64a89698f']);
-    const ids: string[] = Array.from(mySet);
+    //const ids: string[] = Array.from(mySet); //WHERE entry_id::text = ANY(${ids})
+    const ids = Array.from(mySet);
+   
+
     const data = await sql`
         SELECT entry_id, company, position, round, date, approved, approver    
         FROM interview
-        WHERE entry_id::text = ANY(${ids})
+        WHERE entry_id::text = ANY(${ids}::text[])
     `
 
     return data
@@ -32,10 +35,27 @@ async function testApproveInterview() {
 }
 
 
+// async function testApprovers() {
+//     const approvers = new Set(['Calliea Pan', 'Sarath Kareti']);
+//     const names = Array.from(approvers);
+//     // Log the query parameters for debugging
+//     console.log('Approvers array:', names);
+
+//     const data = await sql`
+//         SELECT entry_id, company, position, round, date, approved, approver    
+//         FROM interview
+//         WHERE approver = ANY(${names}::text[])
+//     `;
+
+//     return data;
+// }
+
+
 export async function GET() {
     try {
 
         const results = await testApproveInterview();
+        //const results = await testApprovers();
         return Response.json(results);
     
     } catch (error) {

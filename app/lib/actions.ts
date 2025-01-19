@@ -9,10 +9,6 @@ import { Resend } from 'resend';
 
 
 
-
-
-
-
 export async function submitInterview(formData: {
   email: string
   date: string
@@ -134,11 +130,12 @@ export async function approveInterview(
   approver: string) { 
     try {
       // Convert the Set to an array
-      const ids: string[] = Array.from(selectedIds);
+      //const ids: string[] = Array.from(selectedIds);
+      const ids = Array.from(selectedIds);
       await sql`
           UPDATE interview
           SET approved = TRUE, approver = ${approver}
-          WHERE entry_id::text = ANY(${ids})
+          WHERE entry_id::text = ANY(${ids}::text[])
       `;
         
         return { success: true };
@@ -152,43 +149,43 @@ export async function approveInterview(
 }
 
 
-export async function sendEmail(
-  username: string, 
-  email:string, 
-  password: string  
-) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+// export async function sendEmail(
+//   username: string, 
+//   email:string, 
+//   password: string  
+// ) {
+//   const resend = new Resend(process.env.RESEND_API_KEY);
   
-  try{
-    const htmlContent = `
-      <p>Thank you, NYU Alumni <strong>${username}</strong>, for adding to our interview sharing repository!</p>
-      <p>Here is your temporary login information:</p>
-      <ul>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Password:</strong> ${password}</li>
-      </ul>
-      <p>Please log in to the following pages:</p>
-      <ul>
-        <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/login?callbackUrl=https%3A%2F%2Fv0-cds-website-anauxk3oqku.vercel.app%2Finterviews_table">Update Password</a></li>
-        <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/update_password">View Interview Experiences</a></li>
-      </ul>
-      <p>Best of luck in your career search!</p>
-      <p>NYU CDS Alumni Council</p>
-    `;
+//   try{
+//     const htmlContent = `
+//       <p>Thank you, NYU Alumni <strong>${username}</strong>, for adding to our interview sharing repository!</p>
+//       <p>Here is your temporary login information:</p>
+//       <ul>
+//         <li><strong>Email:</strong> ${email}</li>
+//         <li><strong>Password:</strong> ${password}</li>
+//       </ul>
+//       <p>Please log in to the following pages:</p>
+//       <ul>
+//         <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/login?callbackUrl=https%3A%2F%2Fv0-cds-website-anauxk3oqku.vercel.app%2Finterviews_table">Update Password</a></li>
+//         <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/update_password">View Interview Experiences</a></li>
+//       </ul>
+//       <p>Best of luck in your career search!</p>
+//       <p>NYU CDS Alumni Council</p>
+//     `;
 
 
 
-    resend.emails.send({
-      from: 'calliea.pan@gmail.com',
-      //'onboarding@resend.dev',
-      to: email,
-      subject: 'welcome to CDS Interview Sharing from calliea',
-      html: htmlContent
+//     resend.emails.send({
+//       from: 'calliea.pan@gmail.com',
+//       //'onboarding@resend.dev',
+//       to: email,
+//       subject: 'welcome to CDS Interview Sharing from calliea',
+//       html: htmlContent
     
-    });
-    return { success: true, message: 'Email sent successfully' };
-  } catch (error) {
-    console.error('Failed to send email:', error);
-    return { success: false, message: 'Email was not sense' };
-  }
-}
+//     });
+//     return { success: true, message: 'Email sent successfully' };
+//   } catch (error) {
+//     console.error('Failed to send email:', error);
+//     return { success: false, message: 'Email was not sense' };
+//   }
+// }
