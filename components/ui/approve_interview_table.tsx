@@ -3,6 +3,7 @@ import { formatQuestionAnswer } from '@/lib/utils';
 import { InterviewDataAll } from '@/app/lib/definitions';
 import { useState } from 'react'; // Import useState for managing state
 import { approveInterview } from '@/app/lib/actions';
+import { useRouter } from 'next/navigation'; // Add this import
 
 const formatDateToLocal = (date: Date, locale: string = 'en-US') => {
   const options: Intl.DateTimeFormatOptions = {
@@ -17,9 +18,10 @@ const formatDateToLocal = (date: Date, locale: string = 'en-US') => {
 export default function ApproveInterviewTable({ 
     interviews}: {interviews:InterviewDataAll[]
 }) {
-  //const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set()); // Track selected rows
+  const router = useRouter();
   const [approver, setApprover] = useState<string>(''); // Selected approver
   const [selectedIds, setSelectedIds]  = useState<Set<string>>(new Set()); // Track selected rows' ids
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
 
   // Handle checkbox selection
   const handleCheckboxChange = (entry_id: string) => {
@@ -32,7 +34,6 @@ export default function ApproveInterviewTable({
     setSelectedIds(newSelectedIds);
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -40,26 +41,26 @@ export default function ApproveInterviewTable({
       alert('Please select at least one row and an approver.');
       return;
     }
-    //Modify below to a funciton in action
 
     try {
+      setIsSubmitting(true); // Disable form while submitting
       console.log('selectedIds', selectedIds);
       console.log('selected approver', approver);
       const result = await approveInterview(selectedIds, approver);  
+
       if (result.success) {
         alert('interviews approved successfully!');
         setSelectedIds(new Set()); // Clear selected rows
         setApprover(''); // Reset approver
-
-        // Refresh the page to fetch the latest data, removing the entries that were just approved
-        window.location.reload();
-
+        router.refresh(); // This will trigger a refresh of the server components
       } else {
         throw new Error('Failed to approve rows');
       }
     } catch (error) {
       console.error('Error approving rows:', error);
       alert('Failed to approve rows. Please try again.');
+    } finally {
+      setIsSubmitting(false); // Re-enable form
     }
   };
 
@@ -112,6 +113,7 @@ export default function ApproveInterviewTable({
                 onChange={(e) => setApprover(e.target.value)}
                 className="p-2 border rounded"
                 required
+                disabled={isSubmitting}
               >
                 <option value="">Select Approver</option>
                 <option value="Calliea Pan">Calliea Pan</option>
@@ -121,8 +123,9 @@ export default function ApproveInterviewTable({
               <button
                 type="submit"
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                disabled={isSubmitting}
               >
-                Approve Selected Interviews
+                {isSubmitting ? 'Approving...' : 'Approve Selected Interviews'}
               </button>
             </div>
           </form>
