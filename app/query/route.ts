@@ -1,4 +1,4 @@
-import { db } from "@vercel/postgres";
+//import { db } from "@vercel/postgres";
 import { sql } from '@vercel/postgres';
 ///import { fetchInterviews } from "../lib/data";
 //import { approveInterview, sendEmail } from "../lib/actions";
