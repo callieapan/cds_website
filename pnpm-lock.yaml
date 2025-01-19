@@ -87,6 +87,9 @@ importers:
       '@types/nodemailer':
         specifier: ^6.4.17
         version: 6.4.17
+      '@types/pg':
+        specifier: ^8.11.6
+        version: 8.11.6
       '@types/react':
         specifier: ^19
         version: 19.0.2
