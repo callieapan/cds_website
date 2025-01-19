@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { signIn } from '@/auth'; //auth
 import { AuthError } from 'next-auth';
 //import nodemailer from 'nodemailer';
-import { Resend } from 'resend';
+//import { Resend } from 'resend';
 
 
 
