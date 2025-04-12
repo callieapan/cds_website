@@ -9,6 +9,7 @@ import { Password } from './definitions';
 import { sendInterviewSubmissionEmail } from './emailnew';
 import { genPassword } from './utils';
 
+
 export async function submitInterview(formData: {
   email: string
   date: string
@@ -19,7 +20,6 @@ export async function submitInterview(formData: {
   questionAnswer: string
   userName: string
   contactInfo: string
-
 }) {
   try {
     const round =  formData.round === 'other' ? formData.otherRound : formData.round;
@@ -50,6 +50,7 @@ export async function submitInterview(formData: {
     
     //revalidate path after inserting new intervew into database
     revalidatePath('/interview_table')
+
     return { success: true };
   } catch (error){
     console.error('Failed to submit interview', error)
@@ -155,6 +156,7 @@ export async function approveInterview(
         SELECT email, username
         FROM interview
         WHERE entry_id::text in (${placeholders})
+        AND email not in (SELECT distinct email FROM interview_users)
       `;
       const interviews = await queryDatabaseTypeSafe<{email: string, username: string}>(getInterviewsQuery, ids);
 
