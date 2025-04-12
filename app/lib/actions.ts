@@ -6,6 +6,8 @@ import { signIn } from '@/auth'; //auth
 import { AuthError } from 'next-auth';
 import { queryDatabase, queryDatabaseTypeSafe } from '../lib/db';
 import { Password } from './definitions';
+import { sendInterviewSubmissionEmail } from './emailnew';
+import { genPassword } from './utils';
 
 export async function submitInterview(formData: {
   email: string
@@ -45,15 +47,14 @@ export async function submitInterview(formData: {
     ];
 
     await queryDatabase(query, queryParams)
+    
     //revalidate path after inserting new intervew into database
     revalidatePath('/interview_table')
     return { success: true };
   } catch (error){
     console.error('Failed to submit interview', error)
     return { success: false, error: 'Failed to submit interview '};
-
   }
-  
 }
 
 
@@ -117,6 +118,7 @@ export async function updatePassword (email:string, currentPassword: string, new
 }
 
 export async function addUser(username: string, email:string, password: string) {
+  // add user using the adduser page
   try {
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -143,70 +145,73 @@ export async function approveInterview(
   approver: string) { 
     try {
       // Convert the Set to an array
-      //const ids: string[] = Array.from(selectedIds);
       const ids = Array.from(selectedIds);
        
-      const placeholders = ids.map((_, index) =>`$${index + 2}`).join(', '); 
-      //console.log(placeholders)
+      // Fix: Start placeholders from index 1 since $1 is used for approver
+      const placeholders = ids.map((_, index) =>`$${index + 1}`).join(', '); 
 
-      const query =`
-          UPDATE interview
-          SET approved = TRUE, approver = $1
-          WHERE entry_id::text in (${placeholders})
+      // First, get the interview details to send emails
+      const getInterviewsQuery = `
+        SELECT email, username
+        FROM interview
+        WHERE entry_id::text in (${placeholders})
       `;
+      const interviews = await queryDatabaseTypeSafe<{email: string, username: string}>(getInterviewsQuery, ids);
 
-        // Execute the query
-      await queryDatabase(query, [approver, ...ids]);
-
-        return { success: true };
-      } catch (error){
-        console.error('Failed to sql update interview', error)
-        return { success: false, error: 'Failed to submit approved interview '};
-
+      // Log if no interviews were found
+      if (interviews.length === 0) {
+        console.error('No interviews found for the selected IDs:', ids);
+        return { success: false, error: 'No interviews found for the selected IDs' };
       }
 
+      // Update the interviews to approved status
+      const updateQuery =`
+          UPDATE interview
+          SET approved = TRUE, approver = $${ids.length + 1}
+          WHERE entry_id::text in (${placeholders})
+      `;
+      await queryDatabase(updateQuery, [...ids, approver]);
 
+      // For each approved interview, generate a password and send an email
+      for (const interview of interviews) {
+        try {
+          // Generate a random password
+          const generatedPassword = genPassword();
+          
+          // Add user to the database with the generated password
+          const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+          const addUserQuery = `
+            INSERT INTO interview_users (name, email, password)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (email) DO NOTHING;
+          `;
+          await queryDatabase(addUserQuery, [
+            interview.username || 'Anonymous',
+            interview.email,
+            hashedPassword
+          ]);
+          
+          // Send approval email with the generated password
+          const emailResult = await sendInterviewSubmissionEmail(  
+            interview.email,
+            generatedPassword, 
+            interview.username || 'CDS member'
+          );
+
+          if (!emailResult.success) {
+            console.error('Failed to send approval email to:', interview.email, 'Error:', emailResult.error);
+          } else {
+            console.log('Successfully sent approval email to:', interview.email);
+          }
+        } catch (interviewError) {
+          console.error('Error processing interview for email:', interview.email, 'Error:', interviewError);
+        }
+      }
+
+      return { success: true };
+    } catch (error){
+      console.error('Failed to approve interviews:', error);
+      return { success: false, error: 'Failed to submit approved interview '};
+    }
 }
 
-// COMMENT OUT BEFORE GIT
-//SEND GRID, MAIL GUN
-// export async function sendEmail(
-//   username: string, 
-//   email:string, 
-//   password: string  
-// ) {
-//   const resend = new Resend(process.env.RESEND_API_KEY);
-  
-//   try{
-//     const htmlContent = `
-//       <p>Thank you, NYU Alumni <strong>${username}</strong>, for adding to our interview sharing repository!</p>
-//       <p>Here is your temporary login information:</p>
-//       <ul>
-//         <li><strong>Email:</strong> ${email}</li>
-//         <li><strong>Password:</strong> ${password}</li>
-//       </ul>
-//       <p>Please log in to the following pages:</p>
-//       <ul>
-//         <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/login?callbackUrl=https%3A%2F%2Fv0-cds-website-anauxk3oqku.vercel.app%2Finterviews_table">Update Password</a></li>
-//         <li><a href="https://v0-cds-website-anauxk3oqku.vercel.app/update_password">View Interview Experiences</a></li>
-//       </ul>
-//       <p>Best of luck in your career search!</p>
-//       <p>NYU CDS Alumni Council</p>
-//     `;
-
-
-
-//     resend.emails.send({
-//       from: 'calliea.pan@gmail.com',
-//       //'onboarding@resend.dev',
-//       to: email,
-//       subject: 'welcome to CDS Interview Sharing from calliea',
-//       html: htmlContent
-    
-//     });
-//     return { success: true, message: 'Email sent successfully' };
-//   } catch (error) {
-//     console.error('Failed to send email:', error);
-//     return { success: false, message: 'Email was not sense' };
-//   }
-// }

@@ -2,9 +2,10 @@
 //import { sql } from '@vercel/postgres';
 ///import { fetchInterviews } from "../lib/data";
 //import { fetchInterviews, approveInterview, sendEmail } from "../lib/actions";
-import { queryDatabase } from '../lib/db'; //queryDatabase,queryDatabaseTypeSafe,
+//import { queryDatabase } from '../lib/db'; //queryDatabase,queryDatabaseTypeSafe,
 //import { InterviewDataAll } from '../lib/definitions';
-
+import { sendInterviewSubmissionEmail } from '../lib/emailnew';
+import { genPassword } from '../lib/utils';
 //const client = await db.connect();
 
 
@@ -85,14 +86,14 @@ import { queryDatabase } from '../lib/db'; //queryDatabase,queryDatabaseTypeSafe
 //     return data; // data.rows Return the rows from the query result
 // }
 
-async function getTotItem (){
-    const query = `
-            SELECT count(*) 
-            FROM interview
-        `;
-    const result = queryDatabase(query, []);
-    return result
-}
+// async function getTotItem (){
+//     const query = `
+//             SELECT count(*) 
+//             FROM interview
+//         `;
+//     const result = queryDatabase(query, []);
+//     return result
+// }
 
 // async function testUpdate() {
 //     const query = `
@@ -104,13 +105,23 @@ async function getTotItem (){
 //     return result
 // }
 
+
+async function testInterview (){
+    const email = 'calliea.pan@gmail.com';
+    const password = genPassword();
+    const result = sendInterviewSubmissionEmail(email, password, 'CDS member');
+    return result
+}
+
+
 export async function GET() {
     try {
 
         //const results = await testApproveInterview();
         //const results = await testApprovers();
-        const results = getTotItem();
+        //const results = getTotItem();   
         //const results = testUpdate();
+        const results = testInterview();
         return Response.json(results);
     
     } catch (error) {
