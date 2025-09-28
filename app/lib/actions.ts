@@ -48,7 +48,7 @@ export async function submitInterview(formData: {
 
     await queryDatabase(query, queryParams)
     
-    //revalidate path after inserting new intervew into database
+    //revalidate path after inserting new interview into database
     revalidatePath('/interview_table')
 
     return { success: true };
@@ -153,12 +153,12 @@ export async function approveInterview(
 
       // First, get the interview details to send emails
       const getInterviewsQuery = `
-        SELECT email, username
-        FROM interview
+        SELECT A.email, A.username, B.email is not null as current_user_flag
+        FROM interview A left join interview_users B on A.email = B.email
         WHERE entry_id::text in (${placeholders})
-        AND email not in (SELECT distinct email FROM interview_users)
+         
       `;
-      const interviews = await queryDatabaseTypeSafe<{email: string, username: string}>(getInterviewsQuery, ids);
+      const interviews = await queryDatabaseTypeSafe<{email: string, username: string, current_user_flag: boolean}>(getInterviewsQuery, ids);
 
       // Log if no interviews were found
       if (interviews.length === 0) {
@@ -177,33 +177,35 @@ export async function approveInterview(
       // For each approved interview, generate a password and send an email
       for (const interview of interviews) {
         try {
-          // Generate a random password
-          const generatedPassword = genPassword();
-          
-          // Add user to the database with the generated password
-          const hashedPassword = await bcrypt.hash(generatedPassword, 10);
-          const addUserQuery = `
-            INSERT INTO interview_users (name, email, password)
-            VALUES ($1, $2, $3)
-            ON CONFLICT (email) DO NOTHING;
-          `;
-          await queryDatabase(addUserQuery, [
-            interview.username || 'Anonymous',
-            interview.email,
-            hashedPassword
-          ]);
-          
-          // Send approval email with the generated password
-          const emailResult = await sendInterviewSubmissionEmail(  
-            interview.email,
-            generatedPassword, 
-            interview.username || 'CDS member'
-          );
+          if (interview.current_user_flag === false) {
+            // Generate a random password
+            const generatedPassword = genPassword();
+            
+            // Add user to the database with the generated password
+            const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+            const addUserQuery = `
+              INSERT INTO interview_users (name, email, password)
+              VALUES ($1, $2, $3)
+              ON CONFLICT (email) DO NOTHING;
+            `;
+            await queryDatabase(addUserQuery, [
+              interview.username || 'Anonymous',
+              interview.email,
+              hashedPassword
+            ]);
+            
+            // Send approval email with the generated password
+            const emailResult = await sendInterviewSubmissionEmail(  
+              interview.email,
+              generatedPassword, 
+              interview.username || 'CDS member'
+            );
 
-          if (!emailResult.success) {
-            console.error('Failed to send approval email to:', interview.email, 'Error:', emailResult.error);
-          } else {
-            console.log('Successfully sent approval email to:', interview.email);
+            if (!emailResult.success) {
+              console.error('Failed to send approval email to:', interview.email, 'Error:', emailResult.error);
+            } else {
+              console.log('Successfully sent approval email to:', interview.email);
+            }
           }
         } catch (interviewError) {
           console.error('Error processing interview for email:', interview.email, 'Error:', interviewError);

@@ -27,7 +27,7 @@ export default function Page () {
         e.preventDefault();
 
         if (newPassword !== confirmPassword) {
-            setError ('New pasword do not match.');
+            setError ('New password do not match.');
             return;
         }
 
@@ -38,14 +38,14 @@ export default function Page () {
                 setSuccess('Password updated successfully!');
                 setError('');
                 setTimeout( () => {
-                    router.push('/interviews_table'); //Redirect to view intervews, not homepage after success
+                    router.push('/interviews_table'); //Redirect to view interviews, not homepage after success
                 }, 2000);    
                 
                 } else {
                     setError(result.message || 'Failed to update password.');
                 }
             } catch (err) {
-                setError('An error occured. Please try again.')
+                setError('An error occurred. Please try again.')
                 if (err instanceof Error){
                   console.log(err.message)
                 } 

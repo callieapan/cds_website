@@ -41,7 +41,7 @@ export default function AddUserForm() {
                 setError(result.message || 'Failed to add new user.');
             }
         } catch (err) {
-            setError('An error occured. Please try again.')
+            setError('An error occurred. Please try again.')
             if (err instanceof Error){
               console.log(err.message)
             } 
