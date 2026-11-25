@@ -8,7 +8,7 @@ const pool = new Pool({
     host: process.env.PGHOST,
     max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 10000,
     ssl: {
         rejectUnauthorized: false, // Allow self-signed certificates
       },
